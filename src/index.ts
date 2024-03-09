@@ -1,16 +1,15 @@
 import inquirer from "inquirer";
+import { promptList } from "./constant.js";
 
-inquirer
-  .prompt([ 
-    'hi, plaese input your age: '
-  ])  
-  .then(answers => {
-    console.log('ok');
-  })  
-  .catch(error => {
-    if (error.isTtyError) {
-      console.log('1'); 
+async function main() {
+  const result = await inquirer
+  .prompt(promptList).catch(err => {
+    if (err.isTtyError) {
+      console.error('Prompt couldn\'t be rendered in the current environment');
     } else {
-      console.log('22222');
+      console.error(err);
     }
-  })
+  });
+  console.log('result', result);
+}
+main();
