@@ -1,11 +1,12 @@
-const { program } = require('commander');
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var commander_1 = require("commander");
+var program = new commander_1.Command();
 program
-  .option('--first')
-  .option('-s, --separator <char>');
-
+    .option('-p, --pizza-type <type>', 'add');
+// console.log('argv: ', process.argv);
 program.parse();
-
-const options = program.opts();
-const limit = options.first ? 1 : undefined;
-console.log(program.args[0].split(options.separator, limit));
+var options = program.opts();
+if (options.pizzaType) {
+    console.log(options);
+}
