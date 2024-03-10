@@ -1,5 +1,6 @@
 import inquirer from "inquirer";
-import { promptList } from "./constant.js";
+import { Module, promptList } from "./constant.js";
+import { renameFiles } from "./funcs/rename.js";
 
 async function main() {
   const result = await inquirer
@@ -9,7 +10,11 @@ async function main() {
     } else {
       console.error(err);
     }
-  });
-  console.log('result', result);
+  }) as { func: Module } | undefined;
+  // console.log('result', result);
+  const funcs = {
+    [Module.Rename]: renameFiles,
+  };
+  funcs[result.func]?.();
 }
 main();
