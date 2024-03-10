@@ -20,7 +20,6 @@ export const renameFiles = async () => {
         console.error(err);
       }
     }) as CommandResult | undefined;
-  console.log('results', result);
   const { folder, fileName } = result || {};
   if (!fileName?.trim?.()?.length) {
     console.log('fileName is Empty');
@@ -30,11 +29,28 @@ export const renameFiles = async () => {
   console.log('finalPath', finalPath);
   try {
     const dir = await fs.readdir(finalPath);
-    console.log('rename start');
+    const newFileName = fileName.split('.')[0];
+    const newFileExtName = fileName.split('.')[1];
+    // 这里加一步确认。
+    console.log('old folder files: ', dir);
+    const confirmResult = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'confirmResult',
+        message: `This folder? content: ⬆️`
+      }
+    ]);
+    console.log('confirmResult', confirmResult);
+    if (!confirmResult.confirmResult) {
+      console.warn('stoped.');
+      return;
+    }
     for (let i = 0; i < dir.length; i++) {
       const file = dir[i];
-      const result = await fs.rename(path.join(finalPath, file), path.join(finalPath, `${fileName}-${i}`));
-      console.log(`rename, ${file} to ${fileName}-${i}`);
+      const splitFile = file.split('.');
+      const originExtName = splitFile?.[1];
+      const result = await fs.rename(path.join(finalPath, file), path.join(finalPath, `${newFileName}-${i}.${newFileExtName || originExtName}`));
+      console.log(`rename, ${file} to ${newFileName}-${i}.${newFileExtName || originExtName}`);
     }
     console.log('rename end');
   } catch (e) {
