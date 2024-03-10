@@ -1,4 +1,4 @@
-import inquirer, { QuestionCollection } from "inquirer";
+import { QuestionCollection } from "inquirer";
 import { get__dirname } from "./utils/index.js";
 import * as path from "path";
 

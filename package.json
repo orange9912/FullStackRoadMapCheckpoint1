@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "tsc -p tsconfig.json -w"
+    "tsc": "tsc -p tsconfig.json -w",
+    "prepare": "husky install"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +18,10 @@
   "devDependencies": {
     "@types/inquirer": "^9.0.7",
     "@types/node": "^20.11.25",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@typescript-eslint/parser": "^7.1.1",
+    "eslint": "^8.57.0",
+    "husky": "^8.0.0",
     "typescript": "^5.4.2"
   }
 }
