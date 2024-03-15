@@ -5,6 +5,7 @@ import * as path from "path";
 export enum Module {
   Rename = 'rename',
   CheckElement = 'checkelement',
+  Compress = 'compress'
 }
 
 export const promptList: QuestionCollection = [
@@ -20,6 +21,10 @@ export const promptList: QuestionCollection = [
       {
         name: 'query Text Content Of Specific Element',
         value: Module.CheckElement
+      },
+      {
+        name: 'compress Imgs',
+        value: Module.Compress
       }
     ]
   }
