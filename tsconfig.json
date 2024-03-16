@@ -6,7 +6,7 @@
     "node_modules/**/*"
   ],
   "compilerOptions": {
-    "target": "ES2015",
+    "target": "ES5",
     "module": "ESNext",
     "outDir": "./dist",
     "declaration": true,

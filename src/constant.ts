@@ -34,7 +34,7 @@ export const renameFilesPromptList: QuestionCollection = [
   {
     type: 'input',
     name: 'folder',
-    message: `please enter a valid path for file folder, current: ${path.join(get__dirname(), '../../')}`,
+    message: `please enter a valid path for file folder, current: ${path.join(get__dirname(), '../')}`
   },
   {
     type: 'input',

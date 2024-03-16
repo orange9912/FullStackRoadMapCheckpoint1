@@ -25,7 +25,7 @@ export const renameFiles = async () => {
     console.log("fileName is Empty");
     return;
   }
-  const finalPath = path.join(get__dirname(), "../../", folder);
+  const finalPath = path.join(get__dirname(), '../', folder);
   console.log("finalPath", finalPath);
   try {
     const dir = await fs.readdir(finalPath);

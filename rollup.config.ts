@@ -13,7 +13,7 @@ export default defineConfig([
       entryFileNames: '[name].cjs.js',
       sourcemap: true,
     },
-    plugins: [resolve(), commonjs(), typescript(), json()],
+    plugins: [resolve({ exportConditions: ['node'] }), commonjs(), typescript(), json()],
   }, {
     input: './src/index.ts',
     output: {
@@ -22,6 +22,6 @@ export default defineConfig([
       entryFileNames: '[name].esm.js',
       sourcemap: true,
     },
-    plugins: [resolve(), commonjs(), typescript(), json()],
+    plugins: [resolve({ exportConditions: ['node'] }), commonjs(), typescript(), json()],
   }
 ]);
