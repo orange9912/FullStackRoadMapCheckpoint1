@@ -1,5 +1,5 @@
-import sharp from '../sharp.cjs';
+// import * as sharp from "sharp";
 
 export const compress = async () => {
-  console.log('compress', sharp);
+  // console.log('compress', sharp);
 };

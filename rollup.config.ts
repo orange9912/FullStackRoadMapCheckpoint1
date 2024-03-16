@@ -11,6 +11,7 @@ export default defineConfig([
       dir: 'dist',
       format: 'cjs',
       entryFileNames: '[name].cjs.js',
+      sourcemap: true,
     },
     plugins: [resolve(), commonjs(), typescript(), json()],
   }, {
@@ -19,6 +20,7 @@ export default defineConfig([
       dir: 'dist',
       format: 'esm',
       entryFileNames: '[name].esm.js',
+      sourcemap: true,
     },
     plugins: [resolve(), commonjs(), typescript(), json()],
   }
