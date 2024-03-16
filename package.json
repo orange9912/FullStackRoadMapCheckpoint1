@@ -2,9 +2,16 @@
   "name": "cli-app",
   "version": "1.0.0",
   "description": "",
-  "main": "./lib/index.js",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
+    "start": "rollup -w --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
+    "build": "rollup -c rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc -p tsconfig.json -w",
     "prepare": "husky install"
@@ -20,12 +27,16 @@
     "@commitlint/cli": "^19.0.3",
     "@commitlint/config-conventional": "^19.0.3",
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^20.11.25",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "eslint": "^8.57.0",
     "husky": "^8.0.0",
+    "rollup": "^4.13.0",
     "typescript": "^5.4.2"
   }
 }
