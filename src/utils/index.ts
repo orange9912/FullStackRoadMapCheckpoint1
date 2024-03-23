@@ -31,10 +31,11 @@ export const checkFileExist = async (
 };
 
 /**
- * 读取目录（包含对应提示）
+ * 读取目录路径（包含对应提示 + 鉴有效）
  * @param root 默认读取的根目录
  */
-export const readDir = async (root?: string): string => {
+export const readDirPath = async (root?: string): string => {
+  // 读取文件夹内容
   const defaultRoot = root || get__dirname();
   let dirStringInput: string;
   do {
