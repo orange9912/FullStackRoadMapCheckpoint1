@@ -22,6 +22,7 @@ export default defineConfig([
       entryFileNames: '[name].esm.js',
       sourcemap: true,
     },
+    external: ['sharp'],
     plugins: [resolve({ exportConditions: ['node'] }), commonjs(), typescript(), json()],
   }
 ]);

@@ -1,6 +1,5 @@
 import { QuestionCollection } from "inquirer";
 import { get__dirname } from "./utils/index.js";
-import * as path from "path";
 
 export enum Module {
   Rename = 'rename',
@@ -34,7 +33,7 @@ export const renameFilesPromptList: QuestionCollection = [
   {
     type: 'input',
     name: 'folder',
-    message: `please enter a valid path for file folder, current: ${path.join(get__dirname(), '../')}`
+    message: `please enter a valid path for file folder, current: ${get__dirname()}`
   },
   {
     type: 'input',
