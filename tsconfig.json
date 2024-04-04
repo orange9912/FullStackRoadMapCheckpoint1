@@ -7,10 +7,12 @@
   ],
   "compilerOptions": {
     "target": "ES5",
-    "module": "ESNext",
+    "module": "NodeNext",
     "outDir": "./dist",
     "declaration": true,
-    "declarationDir": "./dist"
+    "declarationDir": "./dist",
+    "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": true
   },
   "compileOnSave": true,
 }
