@@ -2,6 +2,7 @@ import { fileURLToPath } from "url";
 import * as path from "path";
 import inquirer from "inquirer";
 import { access, constants } from "fs/promises";
+import { logError } from "./log.ts";
 
 export const get__filename = () => fileURLToPath(import.meta.url);
 
@@ -54,9 +55,7 @@ export const readDirPath = async (root?: string): string => {
       )
       .catch((e) => {
         if (e.isTtyError) {
-          console.error(
-            "Prompt couldn't be rendered in the current environment"
-          );
+          logError("Prompt couldn't be rendered in the current environment")
         }
       })) as { inputPath: string } | undefined;
     const { inputPath } = result || {};
@@ -66,7 +65,7 @@ export const readDirPath = async (root?: string): string => {
       dirStringInput = finalInputPath;
       break;
     }
-    console.error("the path is inValid, once again");
+    logError("the path is inValid, once again");
   // eslint-disable-next-line no-constant-condition
   } while (true);
   return dirStringInput;
