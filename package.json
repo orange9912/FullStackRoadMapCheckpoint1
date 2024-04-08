@@ -1,7 +1,7 @@
 {
   "name": "cli-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "https://roadmap.sh/full-stack里的check-point1",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",

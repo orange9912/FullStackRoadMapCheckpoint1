@@ -15,17 +15,13 @@ const ExpectExtendName = ['png', 'jpg', 'jpeg'];
  */
 export const compress = async () => {
   // console.log('compress', sharp);
+
   const folder = await readDirPath();
-  const spinner = ora('读取文件夹...').start();
   logInfo('Selected Folder: ');
   logInfo(folder);
-  spinner.text = '读取文件。。';
+  const spinner = ora().start();
   const dir = await fs.readdir(folder);
-  logInfo('Folder content: ');
-  logInfo(dir);
-  setTimeout(() => {
-    spinner.succeed('完成');
-  }, 1000);
+  spinner.text = '过滤非图片文件...';
   // 调用sharp压缩图片
   // 1. 针对非jpg、png过滤
   const filteredDir = dir.filter(fileName => {
@@ -36,14 +32,26 @@ export const compress = async () => {
     }
     return false;
   })
-  logSuccessInfo('filered Dir: ');
+  logSuccessInfo('过滤后文件夹: ');
   logInfo(filteredDir)
+  // 这里设置进度，读取文件内容
+  // let finishCount = 0;
+  const readContentTask = filteredDir.map(fileName => {
+    const filePath = `${folder}/${fileName}`;
+    return fs.readFile(filePath);
+  });
+  const readContentTaskResult = await Promise.allSettled(readContentTask);
+  const fileContent = readContentTaskResult.filter(result => result.status === 'fulfilled' && result.value).map((result: PromiseFulfilledResult<Buffer>) => result.value)
+  logInfo([`读取完成，任务总数${readContentTaskResult.length}个，读取成功${fileContent.length}个，`]);
+  spinner.text = '读取文件完成';
+
 
   // 2. 循环将文件读取成<Buffer>，传递给sharp并输出。
   // 这里可以封装一个函数，将单个文件给sharp处理
 
   // handleImg([], {  })
   // 3. 完成。
+  spinner.succeed('完成');
 };
 
 /**
