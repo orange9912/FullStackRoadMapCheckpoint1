@@ -4,7 +4,8 @@ import { get__dirname } from "./utils/index.js";
 export enum Module {
   Rename = 'rename',
   CheckElement = 'checkelement',
-  Compress = 'compress'
+  Compress = 'compress',
+  ParseExcelToWord = 'parseExcelToWord',
 }
 
 export const promptList: QuestionCollection = [
@@ -24,6 +25,10 @@ export const promptList: QuestionCollection = [
       {
         name: 'compress Imgs',
         value: Module.Compress
+      },
+      {
+        name: '特别功能：解析excel每一行都输出一个docx模板内的特定文件',
+        value: Module.ParseExcelToWord
       }
     ]
   }

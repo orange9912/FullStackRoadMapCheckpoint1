@@ -132,3 +132,5 @@ dist
 # dist
 lib/
 testFiles/
+inputFiles/
+outputFiles/
