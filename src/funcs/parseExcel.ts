@@ -1,10 +1,10 @@
 import Exceljs from "exceljs";
 import * as fs from "fs/promises";
 import * as path from "path";
-import { get__dirname } from "../utils/index.ts";
+import { callInquirer, get__dirname, readDirPath } from "../utils/index.ts";
 import AdmZip from "adm-zip";
 import dayjs from "dayjs";
-import { logError } from "../utils/log.ts";
+import { logError, logSuccessInfo } from "../utils/log.ts";
 
 // 还有一个计算规则
 const transformValue = (
@@ -20,7 +20,7 @@ const transformValue = (
     return ["", "初一", "初二", "初三"][Number(finalValue)];
   }
   if (finalValue instanceof Date) {
-    return dayjs(finalValue).format("YYYY年MM月DD日");
+    return dayjs(finalValue).format("YYYY/MM/DD");
   }
   if (typeof value === "object" && value.result === undefined) {
     return "0";
@@ -30,11 +30,18 @@ const transformValue = (
 
 const parseExcel = async () => {
   const workbook = new Exceljs.Workbook();
+  // 增加交互读取指定excel
+  const excelPath = (await readDirPath({ hintPrompt: '请输入excel文件的相对路径' })).path;
+  logSuccessInfo(`读取成功，excel最终路径: ${excelPath}`);
+  
+
   // 先简单做，跑通了再考虑交互配置
   const inputFile = await workbook.xlsx.readFile(
-    path.resolve(get__dirname(), "./inputFiles/副本孩子信息.xlsx")
+    path.resolve(excelPath)
   );
-
+  const allSheet = inputFile.worksheets.map(sheet => sheet.name);
+  callInquirer([{ type: 'list', name: 'sheetName', message: '请选择sheet', choices: allSheet }])
+  return;
   const basicSheet = inputFile.getWorksheet("Sheet1");
 
   const basicSheetContent = basicSheet.getRows(2, basicSheet.rowCount);

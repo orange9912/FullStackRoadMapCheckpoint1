@@ -16,7 +16,7 @@ const ExpectExtendName = ['png', 'jpg', 'jpeg'];
 export const compress = async () => {
   // console.log('compress', sharp);
 
-  const folder = await readDirPath();
+  const folder = (await readDirPath()).path;
   logInfo('Selected Folder: ');
   logInfo(folder);
   const spinner = ora().start();
