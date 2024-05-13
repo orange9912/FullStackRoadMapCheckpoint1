@@ -1,17 +1,18 @@
 import Exceljs from "exceljs";
 import * as fs from "fs/promises";
 import * as path from "path";
-import { callInquirer, get__dirname, readDirPath } from "../utils/index.ts";
+import { get__dirname } from "../utils/index.ts";
 import AdmZip from "adm-zip";
 import dayjs from "dayjs";
-import { logError, logSuccessInfo } from "../utils/log.ts";
+import { logError } from "../utils/log.ts";
+import parseExcel from "../utils/parseExcel.ts";
 
 // 还有一个计算规则
 const transformValue = (
   value?: string | Record<string, unknown>,
   ColName?: string
 ): string => {
-  const finalValue = typeof value !== 'string' ? (value?.result || value) : value; // 有公式的地方取result
+  const finalValue = typeof value !== "string" ? value?.result || value : value; // 有公式的地方取result
   if (ColName === "D") {
     // 性别，1=>男, 2 => 女
     return ["", "男", "女"][Number(finalValue)];
@@ -28,41 +29,21 @@ const transformValue = (
   return finalValue;
 };
 
-const parseExcel = async () => {
-  const workbook = new Exceljs.Workbook();
-  // 增加交互读取指定excel
-  const excelPath = (await readDirPath({ hintPrompt: '请输入excel文件的相对路径' })).path;
-  logSuccessInfo(`读取成功，excel最终路径: ${excelPath}`);
-  
 
-  // 先简单做，跑通了再考虑交互配置
-  const inputFile = await workbook.xlsx.readFile(
-    path.resolve(excelPath)
-  );
-  const allSheet = inputFile.worksheets.map(sheet => sheet.name);
-  if (allSheet.length < 1) {
-    logError('excel文件无可选择的工作表');
-    return;
-  }
-  const selectedSheet = (await callInquirer<{ sheetName: string; }>([{ type: 'list', name: 'sheetName', message: '请选择sheet', choices: allSheet }, { sheetName: allSheet[0] }]))?.sheetName;
-  if (!selectedSheet) {
-    logError('没有选择sheet');
-  }
-  const basicSheet = inputFile.getWorksheet(selectedSheet);
-  // return;
-  const basicSheetContent = basicSheet.getRows(2, basicSheet.rowCount);
-  // 后续增加解析列的范围
-  // const basicSheetContent = basicSheet.getRow(2);
-  // basicSheetContent.eachCell((cell, colNum) => {
-  //   console.log(`Cell: ${colNum} = ${cell.value} ${cell.name}`);
-  // })
-  // basicSheetContent.map(row => {
-  //   console.table(row.getCell('C'));
-  // })
 
+const parseExcelToWord = async () => {
+  const { basicSheetContent } = await parseExcel();
+  await readTemplateAndOutput(basicSheetContent);
+}
+
+/**
+ * 功能不复用的部分，丢出去
+ * @param basicSheetContent 
+ */
+const readTemplateAndOutput = async (basicSheetContent: Exceljs.Row[]) => {
   // 这里开始读取模板docx
   const templateZip = new AdmZip(
-    path.resolve(get__dirname(), "./inputFiles/副本评分报告.zip")
+    path.resolve(get__dirname(), "./inputFiles/template.zip")
   );
   const templateContentXML: string =
     templateZip.readAsText("word/document.xml");
@@ -90,13 +71,13 @@ const parseExcel = async () => {
       `./outputFiles/${userName.value || "undefined"}心理健康结果报告单.docx`
     );
     await fs.copyFile(
-      path.resolve(get__dirname(), "./inputFiles/副本评分报告.zip"),
+      path.resolve(get__dirname(), "./inputFiles/template.zip"),
       destFileName
     ); // 先拷贝一份，然后在这一份上作修改
     let zip;
     try {
-      zip = new AdmZip(destFileName); 
-    } catch(e) {
+      zip = new AdmZip(destFileName);
+    } catch (e) {
       logError(`解析Zip错误，userName: ${userName.value}, 请检查是否重名`);
       return;
     }
@@ -120,4 +101,4 @@ const parseExcel = async () => {
   });
 };
 
-export default parseExcel;
+export default parseExcelToWord;

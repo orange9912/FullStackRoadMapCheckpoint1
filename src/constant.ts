@@ -6,6 +6,7 @@ export enum Module {
   CheckElement = 'checkelement',
   Compress = 'compress',
   ParseExcelToWord = 'parseExcelToWord',
+  CompareCols = 'compareCols',
 }
 
 export const promptList: QuestionCollection = [
@@ -29,6 +30,10 @@ export const promptList: QuestionCollection = [
       {
         name: '特别功能：解析excel每一行都输出一个docx模板内的特定文件',
         value: Module.ParseExcelToWord
+      },
+      {
+        name: '比对excel特定列数据是否不同',
+        value: Module.CompareCols
       }
     ]
   }

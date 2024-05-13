@@ -2,7 +2,8 @@ import inquirer from "inquirer";
 import { Module, promptList } from "./constant.js";
 import { renameFiles } from "./funcs/rename.js";
 import { compress } from "./funcs/compress.js";
-import parseExcel from "./funcs/parseExcel.ts";
+import parseExcelToWord from "./funcs/parseExcelToWord.ts";
+import compareExcel from "./funcs/compareExcel.ts";
 
 async function main() {
   const result = await inquirer
@@ -17,7 +18,8 @@ async function main() {
   const funcs = {
     [Module.Rename]: renameFiles,
     [Module.Compress]: compress,
-    [Module.ParseExcelToWord]: parseExcel,
+    [Module.ParseExcelToWord]: parseExcelToWord,
+    [Module.CompareCols]: compareExcel,
   };
   funcs[result.func]?.();
 }

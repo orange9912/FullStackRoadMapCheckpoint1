@@ -94,14 +94,15 @@ export const readDirPath = async (options?: ReadDirPathOption): Promise<ReadDirP
 };
 
 export const callInquirer = async <T = Record<string, unknown>>(params: Parameters<typeof inquirer.prompt>): Promise<Partial<T>> => {
-  const [questions, initialAnswers] = params || [];
+  const [questions, initialAnswers] = params;
   const result = (await inquirer.prompt(questions, initialAnswers).catch((e) => {
     if (e.isTtyError) {
       logError("Prompt couldn't be rendered in the current environment")
     }
   }));
+  console.log('result', result);
   if (!result) {
     return initialAnswers as T;
   }
-  return Object.assign(initialAnswers, result) as T;
+  return Object.assign(initialAnswers || {}, result) as T;
 }
