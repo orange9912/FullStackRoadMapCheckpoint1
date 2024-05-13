@@ -40,10 +40,16 @@ const parseExcel = async () => {
     path.resolve(excelPath)
   );
   const allSheet = inputFile.worksheets.map(sheet => sheet.name);
-  callInquirer([{ type: 'list', name: 'sheetName', message: '请选择sheet', choices: allSheet }])
-  return;
-  const basicSheet = inputFile.getWorksheet("Sheet1");
-
+  if (allSheet.length < 1) {
+    logError('excel文件无可选择的工作表');
+    return;
+  }
+  const selectedSheet = (await callInquirer<{ sheetName: string; }>([{ type: 'list', name: 'sheetName', message: '请选择sheet', choices: allSheet }, { sheetName: allSheet[0] }]))?.sheetName;
+  if (!selectedSheet) {
+    logError('没有选择sheet');
+  }
+  const basicSheet = inputFile.getWorksheet(selectedSheet);
+  // return;
   const basicSheetContent = basicSheet.getRows(2, basicSheet.rowCount);
   // 后续增加解析列的范围
   // const basicSheetContent = basicSheet.getRow(2);
