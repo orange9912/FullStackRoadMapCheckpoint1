@@ -1,10 +1,10 @@
 import Exceljs from "exceljs";
 import * as fs from "fs/promises";
 import * as path from "path";
-import { get__dirname } from "../utils/index.ts";
+import { callInquirer, get__dirname, readDirPath } from "../utils/index.ts";
 import AdmZip from "adm-zip";
 import dayjs from "dayjs";
-import { logError } from "../utils/log.ts";
+import { logError, logInfo } from "../utils/log.ts";
 import parseExcel from "../utils/parseExcel.ts";
 
 // 还有一个计算规则
@@ -23,7 +23,7 @@ const transformValue = (
   if (finalValue instanceof Date) {
     return dayjs(finalValue).format("YYYY/MM/DD");
   }
-  if (typeof value === "object" && value.result === undefined) {
+  if (typeof value === "object" && finalValue === undefined) {
     return "0";
   }
   return finalValue;
@@ -42,8 +42,10 @@ const parseExcelToWord = async () => {
  */
 const readTemplateAndOutput = async (basicSheetContent: Exceljs.Row[]) => {
   // 这里开始读取模板docx
+  // 模版名字
+  const templateFileName = (await readDirPath({ hintPrompt: '请输入模版文件位置(需要改成zip扩展名）' }))?.path;
   const templateZip = new AdmZip(
-    path.resolve(get__dirname(), "./inputFiles/template.zip")
+    path.resolve(get__dirname(), templateFileName)
   );
   const templateContentXML: string =
     templateZip.readAsText("word/document.xml");
@@ -55,20 +57,52 @@ const readTemplateAndOutput = async (basicSheetContent: Exceljs.Row[]) => {
   const valueArr = originValueArr.map((str) => str.replace(/%/g, ""));
   console.log("filtered: ", valueArr);
 
+  // 读取目标文件的模版名称; 这里$colIndex代表插入第几个格子的
+  // const descFileTempName = '';
+  const descFileTempName = (await callInquirer([
+    {
+      type: "input",
+      name: "tempName",
+      message: "请输入生成的模版名称（例：$1结果报告单，$1表示使用excel第2列填充）",
+    },
+  ])).tempName as string || '$1';
+  
   // 循环，每一行写入
   basicSheetContent.forEach(async (row) => {
     // 复制一份模版文件
-    const userName = row.getCell(1);
-    if (!userName.value) {
+    // 解析模版名称
+    const insetCols = descFileTempName.match(/\$\d+/g);
+    let templateName = descFileTempName;
+    insetCols.forEach(col => {
+      const colName = col.slice(1);
+      if (!colName) {
+        return;
+      }
+      try {
+        const value = row.getCell(Number(colName))?.value;
+        const valueStr = value?.result || value?.text || value;
+        templateName = templateName.replaceAll(col, valueStr);
+      } catch (e) {
+        logError(`错误：${col}, `);
+        logError(e);
+      }
+    });
+    logInfo(`目标文件名称： ${templateName}`);
+    if (!templateName) {
       return;
     }
+    // 如果没有输出文件夹，
+    const outputDir = (await readDirPath({ hintPrompt: '请指定输出文件夹位置' })).path;
+    if (!outputDir) {
+      logError('输出文件夹指定有问题');
+    }
     const destFileName = path.resolve(
-      get__dirname(),
-      `./outputFiles/${userName.value || "undefined"}心理健康结果报告单.zip`
+      outputDir,
+      `./${templateName}.zip`
     );
     const descDocx = path.resolve(
-      get__dirname(),
-      `./outputFiles/${userName.value || "undefined"}心理健康结果报告单.docx`
+      outputDir,
+      `./${templateName}.docx`
     );
     await fs.copyFile(
       path.resolve(get__dirname(), "./inputFiles/template.zip"),
@@ -78,7 +112,7 @@ const readTemplateAndOutput = async (basicSheetContent: Exceljs.Row[]) => {
     try {
       zip = new AdmZip(destFileName);
     } catch (e) {
-      logError(`解析Zip错误，userName: ${userName.value}, 请检查是否重名`);
+      logError(`解析Zip错误，目标文件名称: ${templateName}, 请检查是否重名`);
       return;
     }
     let contentXML: string = zip.readAsText("word/document.xml");

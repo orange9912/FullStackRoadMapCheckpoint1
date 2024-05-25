@@ -12,7 +12,8 @@
     "declaration": true,
     "declarationDir": "./dist",
     "moduleResolution": "NodeNext",
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "lib": ["ES2021.String"]
   },
   "compileOnSave": true,
 }
